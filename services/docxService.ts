@@ -1,4 +1,3 @@
-
 import {
     Document,
     Paragraph,
@@ -47,7 +46,7 @@ export const generateDocxFromReport = (report: AnalysisReportData): Document => 
                     new TextRun({ text: `Polanco, M. (${new Date().getFullYear()}). `, size: 22 }),
                     new TextRun({ text: `Ethical Analysis of '${report.source}'. `, size: 22 }),
                     new TextRun({ text: `Ethical Media Analyzer`, italics: true, size: 22 }),
-                    new TextRun({ text: `. Retrieved ${report.analysisDate}, from this application.`, size: 22 }),
+                    new TextRun({ text: `. Retrieved ${report.analysisDate}, from https://ethical-media-analyzer.vercel.app/`, size: 22 }),
                 ],
                 style: "wellSpaced",
             })
