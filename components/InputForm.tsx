@@ -28,7 +28,7 @@ const TabButton: React.FC<{ active: boolean; onClick: () => void; children: Reac
 
 export const InputForm: React.FC<InputFormProps> = ({ onAnalyze, isLoading }) => {
   const [mode, setMode] = useState<Mode>('title');
-  const [title, setTitle] = useState<string>('The Queen\'s Gambit');
+  const [title, setTitle] = useState<string>('TikTok');
   const [url, setUrl] = useState<string>('');
   const [file, setFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -90,7 +90,7 @@ export const InputForm: React.FC<InputFormProps> = ({ onAnalyze, isLoading }) =>
                     type="text"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    placeholder="e.g., 'Black Mirror' or 'Parasite'"
+                    placeholder="e.g., 'TikTok', 'Black Mirror', or 'Parasite'"
                     className="flex-grow w-full px-4 py-2 text-slate-900 bg-slate-100 dark:bg-slate-700 dark:text-white border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
                     disabled={isLoading}
                 />
