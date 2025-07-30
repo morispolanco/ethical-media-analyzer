@@ -1,5 +1,5 @@
 
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Header } from './components/Header';
 import { InputForm, AnalysisInput } from './components/InputForm';
 import { AnalysisReport } from './components/AnalysisReport';
@@ -9,18 +9,23 @@ import { analyzeSeries, analyzeTranscript, transcribeAudioFile } from './service
 import { getTranscriptFromUrl, transcribeAudioFromUrl } from './services/youtubeService';
 import type { AnalysisReportData } from './types';
 import { IntroContent } from './components/IntroContent';
+import { ExplanationPage } from './components/ExplanationPage';
+
+type Page = 'main' | 'explanation';
 
 export default function App() {
   const [analysisResult, setAnalysisResult] = useState<AnalysisReportData | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [isInitialState, setIsInitialState] = useState<boolean>(true);
+  const [page, setPage] = useState<Page>('main');
   
   const handleAnalyze = useCallback(async (input: AnalysisInput) => {
     setIsLoading(true);
     setError(null);
     setAnalysisResult(null);
     setIsInitialState(false);
+    setPage('main');
 
     try {
       let report: AnalysisReportData | null = null;
@@ -34,7 +39,6 @@ export default function App() {
         const { transcript, videoId } = await getTranscriptFromUrl(input.value);
         let finalTranscript = transcript;
         if (!finalTranscript) {
-            // Simulate fetching transcript from backend if not in cache
             finalTranscript = await transcribeAudioFromUrl(videoId);
         }
         report = await analyzeTranscript(finalTranscript, sourceName);
@@ -61,25 +65,38 @@ export default function App() {
     }
   }, []);
 
-  const handleNewAnalysis = useCallback(() => {
+  const handleUpdateReport = (updatedReport: AnalysisReportData) => {
+    setAnalysisResult(updatedReport);
+  };
+
+  const handleGoHome = useCallback(() => {
     setAnalysisResult(null);
     setError(null);
     setIsInitialState(true);
+    setPage('main');
   }, []);
+  
+  const handleGoToExplanation = () => setPage('explanation');
+
+  const MainContent = () => (
+    <>
+      {!analysisResult && <InputForm onAnalyze={handleAnalyze} isLoading={isLoading} />}
+      
+      <div className="mt-8">
+        {isInitialState && <IntroContent />}
+        {isLoading && <LoadingSpinner message="Analyzing..." />}
+        {error && <ErrorMessage message={error} onNewAnalysis={handleGoHome} />}
+        {analysisResult && <AnalysisReport report={analysisResult} onNewAnalysis={handleGoHome} onUpdateReport={handleUpdateReport} />}
+      </div>
+    </>
+  );
 
   return (
     <div className="min-h-screen bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-sans">
-      <Header />
+      <Header onGoHome={handleGoHome} onGoToExplanation={handleGoToExplanation} />
       <main className="container mx-auto p-4 md:p-8">
         <div className="max-w-4xl mx-auto">
-          {!analysisResult && <InputForm onAnalyze={handleAnalyze} isLoading={isLoading} />}
-          
-          <div className="mt-8">
-            {isInitialState && <IntroContent />}
-            {isLoading && <LoadingSpinner message="Analyzing..." />}
-            {error && <ErrorMessage message={error} onNewAnalysis={handleNewAnalysis} />}
-            {analysisResult && <AnalysisReport report={analysisResult} onNewAnalysis={handleNewAnalysis} />}
-          </div>
+           {page === 'explanation' ? <ExplanationPage onNavigateBack={() => setPage('main')} /> : <MainContent />}
         </div>
       </main>
     </div>

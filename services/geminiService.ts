@@ -1,5 +1,5 @@
 import { GoogleGenAI, Type } from "@google/genai";
-import type { AnalysisReportData } from '../types';
+import type { AnalysisReportData, TranslatedContent } from '../types';
 
 // Ensure process.env.API_KEY is available. In a real app, this is set by the environment.
 const apiKey = process.env.API_KEY;
@@ -20,6 +20,10 @@ const reportSchema = {
             type: Type.STRING,
             description: "A brief, one-paragraph executive summary of the overall ethical landscape of the content."
         },
+        overallConcernLevel: {
+            type: Type.INTEGER,
+            description: "An overall assessment of the ethical concern level, as a percentage from 0 (no concern) to 100 (maximum concern)."
+        },
         thematicAnalysis: {
             type: Type.ARRAY,
             description: "A list of detailed analyses for different ethical themes.",
@@ -33,9 +37,13 @@ const reportSchema = {
                     analysis: {
                         type: Type.STRING,
                         description: "A detailed, multi-sentence analysis for this specific theme."
+                    },
+                    concernLevel: {
+                        type: Type.INTEGER,
+                        description: "Assessment of the ethical concern for this specific theme, as a percentage from 0 (no concern) to 100 (maximum concern)."
                     }
                 },
-                required: ["theme", "analysis"]
+                required: ["theme", "analysis", "concernLevel"]
             }
         },
         concludingRemarks: {
@@ -43,7 +51,7 @@ const reportSchema = {
             description: "Final concluding thoughts, summarizing the key ethical strengths and weaknesses, and providing an overall assessment."
         }
     },
-    required: ["title", "overallSummary", "thematicAnalysis", "concludingRemarks"]
+    required: ["title", "overallSummary", "overallConcernLevel", "thematicAnalysis", "concludingRemarks"]
 };
 
 const seriesAnalysisSystemInstruction = `You are an expert in media ethics, sociology, and cultural studies. Your task is to perform a comprehensive ethical analysis of a given movie or TV series. Your analysis should be thorough, balanced, and consider multiple viewpoints.
@@ -55,6 +63,8 @@ Analyze the provided title and generate a detailed report. Focus on the followin
 4.  **Representation, Stereotyping, and Discrimination**: Assess the diversity of characters. How are different genders, races, ethnicities, sexual orientations, abilities, and socioeconomic groups portrayed? Does the show challenge or reinforce harmful stereotypes?
 5.  **Positive Ethical Aspects**: Identify and discuss any pro-social messages, positive values, or ethical lessons the series might offer.
 6.  **Target Audience Appropriateness**: Based on your analysis, discuss the suitability of the series for different age groups.
+
+Based on your full analysis, assign an 'overallConcernLevel' as a percentage (0-100). For each item in 'thematicAnalysis', assign a 'concernLevel' as a percentage (0-100). A higher percentage indicates a higher level of ethical concern.
 
 Your response MUST be a single, raw JSON object. Do not add any text before or after the JSON object, and do not use markdown formatting like \`\`\`json. Your response must conform to the following JSON schema:
 ${JSON.stringify(reportSchema, null, 2)}
@@ -69,6 +79,8 @@ Analyze the transcript and generate a detailed report. Focus on the following ke
 3.  **Socialization and Interpersonal Relationships**: Examine how relationships are described or portrayed through dialogue.
 4.  **Representation, Stereotyping, and Discrimination**: Assess how different groups or individuals are portrayed. Does the text reinforce stereotypes?
 5.  **Positive Ethical Aspects**: Identify and discuss any pro-social messages, positive values, or ethical lessons in the text.
+
+Based on your full analysis, assign an 'overallConcernLevel' as a percentage (0-100). For each item in 'thematicAnalysis', assign a 'concernLevel' as a percentage (0-100). A higher percentage indicates a higher level of ethical concern.
 
 Structure your findings strictly according to the provided JSON schema. The 'title' field in your response should be the source name provided by the user.`;
 
@@ -87,8 +99,11 @@ const parseAIResponse = (responseText: string): AnalysisReportData => {
         throw new Error("The AI returned a response that was not valid JSON. Please try again.");
     }
     
-    if (!report.title || !report.overallSummary || !Array.isArray(report.thematicAnalysis) || !report.concludingRemarks) {
+    if (!report.title || !report.overallSummary || !Array.isArray(report.thematicAnalysis) || !report.concludingRemarks || typeof report.overallConcernLevel !== 'number') {
       throw new Error("AI response is missing required fields or has an invalid format.");
+    }
+    if (report.thematicAnalysis.some(item => !item.theme || !item.analysis || typeof item.concernLevel !== 'number')) {
+        throw new Error("AI response has malformed thematic analysis items.");
     }
     return report;
 };
@@ -102,7 +117,8 @@ export const analyzeSeries = async (seriesTitle: string): Promise<AnalysisReport
             config: {
                 systemInstruction: seriesAnalysisSystemInstruction,
                 temperature: 0.3,
-                tools: [{googleSearch: {}}],
+                responseMimeType: "application/json",
+                responseSchema: reportSchema,
             },
         });
 
@@ -167,5 +183,57 @@ export const transcribeAudioFile = async (file: File): Promise<string> => {
     } catch (error) {
         console.error("Error transcribing audio file:", error);
         throw new Error("Failed to transcribe audio. The file might be unsupported, corrupted, or too large.");
+    }
+};
+
+const translationSchema = {
+    type: Type.OBJECT,
+    properties: {
+        overallSummary: { type: Type.STRING, description: "Spanish translation of the overall summary." },
+        thematicAnalysis: {
+            type: Type.ARRAY,
+            items: {
+                type: Type.OBJECT,
+                properties: {
+                    analysis: { type: Type.STRING, description: "Spanish translation of the thematic analysis." }
+                },
+                required: ["analysis"]
+            }
+        },
+        concludingRemarks: { type: Type.STRING, description: "Spanish translation of the concluding remarks." }
+    },
+    required: ["overallSummary", "thematicAnalysis", "concludingRemarks"]
+}
+
+export const translateReportToSpanish = async (report: AnalysisReportData): Promise<TranslatedContent> => {
+    const translationPrompt = `Translate the following sections of an ethical analysis report from English to Spanish. Provide the response as a single, raw JSON object conforming to the schema. Do not add any text before or after the JSON.
+
+Original English text:
+{
+  "overallSummary": ${JSON.stringify(report.overallSummary)},
+  "thematicAnalysis": [
+    ${report.thematicAnalysis.map(item => `{ "analysis": ${JSON.stringify(item.analysis)} }`).join(',\n    ')}
+  ],
+  "concludingRemarks": ${JSON.stringify(report.concludingRemarks)}
+}
+`;
+
+    try {
+        const response = await ai.models.generateContent({
+            model: "gemini-2.5-flash",
+            contents: translationPrompt,
+            config: {
+                responseMimeType: "application/json",
+                responseSchema: translationSchema,
+                temperature: 0.2
+            }
+        });
+        
+        const jsonText = response.text.trim();
+        return JSON.parse(jsonText) as TranslatedContent;
+
+    } catch (error) {
+        console.error("Error translating report with Gemini API:", error);
+        throw new Error(`Failed to translate report: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
 };
