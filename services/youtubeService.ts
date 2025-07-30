@@ -27,17 +27,17 @@ if (videoId) {
 // A database of pre-existing transcripts to demonstrate finding an existing transcript.
 const cannedTranscripts: { [key: string]: string } = {
   "m_esT_wowGA": `
-    (Scene: A colorful playroom. Steve is playing with blocks. Maggie, a magpie puppet, flies in.)
-    Steve: Hello Maggie! What are we doing today?
-    Maggie: Let's play hide and seek! You count!
-    Steve: Okay! One... two... oops! (Steve trips over a block and falls down gently). Oh, I'm so clumsy.
-    Maggie: (Pops up from behind a chair) Tonto Steve! Tonto Steve! You fell down!
-    Steve: (Laughing) Oh Maggie, you found me. Yes, silly me. Now it's my turn to find you!
-    (Later, in a home video clip submitted by a viewer)
-    Parent: (Off-screen) What happened, sweetie?
-    Child: (A 4-year-old child points at their father who just dropped his keys)
-    Child: Tonto papá! Tonto papá! Just like Maggie says!
-    Parent: (Sighs) Oh dear.
+    (Escena: Una colorida sala de juegos. Steve juega con bloques. Maggie, una marioneta de urraca, entra volando.)
+    Steve: ¡Hola Maggie! ¿Qué hacemos hoy?
+    Maggie: ¡Juguemos al escondite! ¡Tú cuentas!
+    Steve: ¡Vale! Uno... dos... ¡uy! (Steve se tropieza con un bloque y cae suavemente). Oh, qué torpe soy.
+    Maggie: (Aparece detrás de una silla) ¡Tonto Steve! ¡Tonto Steve! ¡Te caíste!
+    Steve: (Riendo) Oh Maggie, me encontraste. Sí, qué tonto soy. ¡Ahora me toca a mí encontrarte!
+    (Más tarde, en un video casero enviado por un espectador)
+    Padre: (Fuera de cámara) ¿Qué pasó, cariño?
+    Niño: (Un niño de 4 años señala a su padre que acaba de dejar caer las llaves)
+    Niño: ¡Tonto papá! ¡Tonto papá! ¡Como dice Maggie!
+    Padre: (Suspira) Ay, Dios.
     `,
 };
 
@@ -51,7 +51,7 @@ export const getTranscriptFromUrl = (url: string): Promise<{ transcript: string 
     setTimeout(() => {
       const videoId = getVideoId(url);
       if (!videoId) {
-        return reject(new Error("Invalid YouTube URL. Please check the format and try again."));
+        return reject(new Error("URL de YouTube no válida. Por favor, revisa el formato e inténtalo de nuevo."));
       }
       const transcript = cannedTranscripts[videoId] || null;
       resolve({ transcript, videoId });
@@ -66,11 +66,11 @@ export const getTranscriptFromUrl = (url: string): Promise<{ transcript: string 
  * @returns A promise that resolves with a generic, plausible transcript.
  */
 export const transcribeAudioFromUrl = (videoId: string): Promise<string> => {
-    console.log(`Simulating transcription for video ID: ${videoId}`);
+    console.log(`Simulando transcripción para el video ID: ${videoId}`);
     return new Promise((resolve) => {
         setTimeout(() => {
             // Return a generic transcript to show the process works for any URL.
-            resolve("Hello everyone, and welcome back to the channel. In today's video, we are going to be looking at some interesting new toys. This first one is a bright red car, and it makes a very loud vroom sound. Let's see what happens next. Oh, look, here comes a blue airplane. It can fly very high in the sky. It's important to share our toys and play nicely together. Always be kind to your friends.");
+            resolve("Hola a todos y bienvenidos de nuevo al canal. En el video de hoy, vamos a ver algunos juguetes nuevos e interesantes. El primero es un coche rojo brillante y hace un sonido de 'vroom' muy fuerte. Veamos qué pasa después. Oh, mira, aquí viene un avión azul. Puede volar muy alto en el cielo. Es importante compartir nuestros juguetes y jugar bien juntos. Siempre sé amable con tus amigos.");
         }, 2000); // Simulate longer delay for transcription
     });
 };

@@ -26,73 +26,73 @@ export const ExplanationPage: React.FC<ExplanationPageProps> = ({ onNavigateBack
         <div className="bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-xl shadow-lg">
             <div className="flex items-center justify-between mb-6">
                 <h1 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white">
-                    Methodology
+                    Metodología
                 </h1>
                 <button
                     onClick={onNavigateBack}
                     className="flex items-center gap-2 px-4 py-2 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold rounded-lg shadow-sm hover:bg-slate-300 dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-slate-900 transition-colors"
-                    aria-label="Back to analyzer"
+                    aria-label="Volver al analizador"
                 >
                     <ChevronLeftIcon className="h-5 w-5" />
-                    <span className="hidden sm:inline">Back</span>
+                    <span className="hidden sm:inline">Volver</span>
                 </button>
             </div>
             
             <p className="text-lg text-slate-600 dark:text-slate-300 mb-8">
-                This tool provides an AI-driven ethical analysis of media content. It is designed to be a supplementary tool to encourage critical thinking, not as a definitive moral or ethical judgment. Here’s how it works.
+                Esta herramienta proporciona un análisis ético de contenido mediático impulsado por IA. Está diseñada como una herramienta complementaria para fomentar el pensamiento crítico, no como un juicio moral o ético definitivo. Así es como funciona.
             </p>
 
-            <Section title="The AI Engine">
+            <Section title="El Motor de IA">
                 <p>
-                    The core of this analyzer is Google's <strong>Gemini 2.5 Flash</strong>, a sophisticated Large Language Model (LLM). The AI is given a detailed set of instructions—a "system prompt"—that guides it to act as an expert in media ethics. It analyzes the provided title or transcript based on this framework, not on pre-existing opinions or a database of reviews.
+                    El núcleo de este analizador es <strong>Gemini 2.5 Flash</strong> de Google, un sofisticado Modelo de Lenguaje Grande (LLM). A la IA se le da un conjunto detallado de instrucciones —un "prompt de sistema"— que la guía para actuar como una experta en ética de los medios. Analiza el título o la transcripción proporcionada basándose en este marco, no en opiniones preexistentes o en una base de datos de reseñas.
                 </p>
             </Section>
 
-            <Section title="The Analytical Framework">
+            <Section title="El Marco Analítico">
                 <p>
-                    The AI evaluates content across several key thematic areas derived from established media and communication studies. These themes include:
+                    La IA evalúa el contenido a través de varias áreas temáticas clave derivadas de estudios establecidos sobre medios y comunicación. Estos temas incluyen:
                 </p>
                 <ul className="list-disc list-inside space-y-2 mt-4 text-slate-600 dark:text-slate-300">
-                    <li><strong>Language and Communication:</strong> Examines dialogue for respect, hate speech, and healthy vs. toxic communication styles.</li>
-                    <li><strong>Behavioral Modeling:</strong> Analyzes whether the content promotes harmful behaviors (e.g., violence, substance abuse) or pro-social ones.</li>
-                    <li><strong>Social Relationships:</strong> Assesses the portrayal of family, friendships, and romantic relationships.</li>
-                    <li><strong>Representation and Stereotyping:</strong> Evaluates the diversity of characters and whether the content reinforces or challenges harmful stereotypes.</li>
-                    <li><strong>Positive Ethical Aspects:</strong> Identifies pro-social messages, positive values, or ethical lessons.</li>
-                    <li><strong>Target Audience Appropriateness:</strong> Considers the content's suitability for different age groups.</li>
+                    <li><strong>Lenguaje y Comunicación:</strong> Examina el diálogo en busca de respeto, discurso de odio y estilos de comunicación saludables frente a tóxicos.</li>
+                    <li><strong>Modelado de Comportamiento:</strong> Analiza si el contenido promueve comportamientos dañinos (p. ej., violencia, abuso de sustancias) o prosociales.</li>
+                    <li><strong>Relaciones Sociales:</strong> Evalúa la representación de las relaciones familiares, de amistad y románticas.</li>
+                    <li><strong>Representación y Estereotipos:</strong> Evalúa la diversidad de personajes y si el contenido refuerza o desafía estereotipos dañinos.</li>
+                    <li><strong>Aspectos Éticos Positivos:</strong> Identifica mensajes prosociales, valores positivos o lecciones éticas.</li>
+                    <li><strong>Adecuación al Público Objetivo:</strong> Considera la idoneidad del contenido para diferentes grupos de edad.</li>
                 </ul>
             </Section>
 
-            <Section title="The 'Concern Level' Metric">
+            <Section title="La Métrica 'Nivel de Preocupación'">
                 <p>
-                    The "Concern Level" is a quantitative score (0-100%) generated by the AI for the overall content and for each theme. It represents the model's synthesized assessment of the potential for ethical issues.
+                    El "Nivel de Preocupación" es una puntuación cuantitativa (0-100%) generada por la IA para el contenido general y para cada tema. Representa la evaluación sintetizada del modelo sobre el potencial de problemas éticos.
                 </p>
                 <div className="mt-4 p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
                     <p>
-                        A <strong>low percentage</strong> suggests few ethical concerns, while a <strong>high percentage</strong> indicates the presence of significant ethical issues that may warrant viewer caution and critical discussion. This metric is a tool for highlighting areas of potential concern, not an absolute measure of quality or "unethicality."
+                        Un <strong>porcentaje bajo</strong> sugiere pocas preocupaciones éticas, mientras que un <strong>porcentaje alto</strong> indica la presencia de problemas éticos significativos que pueden requerir precaución y discusión crítica por parte del espectador. Esta métrica es una herramienta para destacar áreas de posible preocupación, no una medida absoluta de calidad o "inmoralidad".
                     </p>
                 </div>
             </Section>
             
-            <Section title="Disclaimer and Limitations">
+            <Section title="Descargo de Responsabilidad y Limitaciones">
                 <div className="p-4 border-l-4 border-yellow-500 bg-yellow-50 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200">
                     <div className="flex">
                         <div className="flex-shrink-0">
                             <LightbulbIcon className="h-6 w-6 text-yellow-500" />
                         </div>
                         <div className="ml-3">
-                            <p className="font-bold">Important Considerations</p>
+                            <p className="font-bold">Consideraciones Importantes</p>
                             <ul className="list-disc list-inside mt-2">
-                                <li><strong>AI is a Tool, Not a Judge:</strong> The analysis is generated by an AI and can have inaccuracies or biases.</li>
-                                <li><strong>Context is Key:</strong> The AI may miss subtle context, satire, or irony that a human viewer would understand.</li>
-                                <li><strong>Use for Critical Thinking:</strong> This report is a starting point for discussion, not a final verdict. Always engage with media critically and form your own informed opinions.</li>
+                                <li><strong>La IA es una Herramienta, no un Juez:</strong> El análisis es generado por una IA y puede tener imprecisiones o sesgos.</li>
+                                <li><strong>El Contexto es Clave:</strong> La IA puede pasar por alto contextos sutiles, sátira o ironía que un espectador humano entendería.</li>
+                                <li><strong>Uso para el Pensamiento Crítico:</strong> Este informe es un punto de partida para la discusión, no un veredicto final. Siempre interactúa con los medios de manera crítica y forma tus propias opiniones informadas.</li>
                             </ul>
                         </div>
                     </div>
                 </div>
             </Section>
 
-            <Section title="Further Reading and Sources">
-                 <p>The analytical framework is informed by established research in media effects, communication theory, and algorithmic ethics. For deeper understanding, we recommend the following sources:</p>
+            <Section title="Lecturas Adicionales y Fuentes">
+                 <p>El marco analítico se basa en investigaciones establecidas en efectos de los medios, teoría de la comunicación y ética algorítmica. Para una comprensión más profunda, recomendamos las siguientes fuentes:</p>
                 <ul className="space-y-4 mt-4">
                     <Source citation="Noble, S. U. (2018). Algorithms of Oppression: How Search Engines Reinforce Racism. New York University Press." />
                     <Source citation="O'Neil, C. (2016). Weapons of Math Destruction: How Big Data Increases Inequality and Threatens Democracy. Crown." />
@@ -107,7 +107,7 @@ export const ExplanationPage: React.FC<ExplanationPageProps> = ({ onNavigateBack
                     className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-slate-900 transition-colors"
                 >
                     <ChevronLeftIcon className="h-5 w-5" />
-                    Back to Analyzer
+                    Volver al Analizador
                 </button>
             </div>
         </div>

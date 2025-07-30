@@ -1,3 +1,4 @@
+
 import {
     Document,
     Paragraph,
@@ -33,20 +34,20 @@ export const generateDocxFromReport = (report: AnalysisReportData): Document => 
             ...createParagraphs(item.analysis),
             new Paragraph({ text: "" }), // spacer
           ])
-        : [new Paragraph({ text: "No thematic analysis was provided.", style: "wellSpaced" })];
+        : [new Paragraph({ text: "No se proporcionó análisis temático.", style: "wellSpaced" })];
 
     const referenceSection: Paragraph[] = [];
     if (report.analysisDate && report.source) {
         referenceSection.push(
-            createSectionHeading("Bibliographic Reference (APA-Style)")
+            createSectionHeading("Referencia Bibliográfica (Estilo APA)")
         );
         referenceSection.push(
             new Paragraph({
                 children: [
                     new TextRun({ text: `Polanco, M. (${new Date().getFullYear()}). `, size: 22 }),
-                    new TextRun({ text: `Ethical Analysis of '${report.source}'. `, size: 22 }),
-                    new TextRun({ text: `Ethical Media Analyzer`, italics: true, size: 22 }),
-                    new TextRun({ text: `. Retrieved ${report.analysisDate}, from https://ethical-media-analyzer.vercel.app/`, size: 22 }),
+                    new TextRun({ text: `Análisis ético de '${report.source}'. `, size: 22 }),
+                    new TextRun({ text: `Analizador Ético de Medios`, italics: true, size: 22 }),
+                    new TextRun({ text: `. Recuperado el ${report.analysisDate}, de https://ethical-media-analyzer.vercel.app/`, size: 22 }),
                 ],
                 style: "wellSpaced",
             })
@@ -73,18 +74,18 @@ export const generateDocxFromReport = (report: AnalysisReportData): Document => 
         },
         sections: [{
             children: [
-                new Paragraph({ text: "Comprehensive Ethical Analysis Report", heading: HeadingLevel.TITLE, alignment: AlignmentType.CENTER }),
+                new Paragraph({ text: "Informe de Análisis Ético Exhaustivo", heading: HeadingLevel.TITLE, alignment: AlignmentType.CENTER }),
                 new Paragraph({ text: "" }),
-                createSectionHeading("Content Analyzed"),
+                createSectionHeading("Contenido Analizado"),
                 new Paragraph({ children: [new TextRun({ text: report.title, bold: true, size: 24 })], style: "wellSpaced" }),
 
-                createSectionHeading("Overall Summary"),
+                createSectionHeading("Resumen General"),
                 ...createParagraphs(report.overallSummary),
 
-                createSectionHeading("Detailed Thematic Analysis"),
+                createSectionHeading("Análisis Temático Detallado"),
                 ...thematicSections,
                 
-                createSectionHeading("Concluding Remarks"),
+                createSectionHeading("Observaciones Finales"),
                 ...createParagraphs(report.concludingRemarks),
 
                 ...referenceSection,

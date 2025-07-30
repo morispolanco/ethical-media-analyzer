@@ -10,26 +10,26 @@ export const IntroContent: React.FC = () => {
                     <BeakerIcon className="h-10 w-10 text-blue-600 dark:text-blue-400" />
                 </div>
             </div>
-            <h2 className="text-2xl font-bold text-slate-800 dark:text-white">Welcome to the Ethical Media Analyzer</h2>
+            <h2 className="text-2xl font-bold text-slate-800 dark:text-white">Bienvenido al Analizador Ético de Medios</h2>
             <p className="mt-2 text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-                This tool uses AI to generate a comprehensive ethical analysis of movies, TV series, or video content, helping viewers and creators understand the complex messages in media.
+                Esta herramienta utiliza IA para generar un análisis ético exhaustivo de películas, series de televisión o contenido de video, ayudando a espectadores y creadores a comprender los complejos mensajes en los medios.
             </p>
             <div className="mt-6 text-left bg-slate-50 dark:bg-slate-700/50 p-4 rounded-lg max-w-2xl mx-auto">
-                <h3 className="font-semibold text-lg text-slate-700 dark:text-slate-200 mb-2">How it Works</h3>
+                <h3 className="font-semibold text-lg text-slate-700 dark:text-slate-200 mb-2">Cómo Funciona</h3>
                 <ul className="list-disc list-inside space-y-3 text-slate-600 dark:text-slate-300">
                     <li>
-                        <strong>Analyze by Title:</strong> Enter the name of a movie or TV series. The AI will research it and produce a detailed ethical report covering themes like language, social representation, and more.
+                        <strong>Analizar por Título:</strong> Ingresa el nombre de una película o serie de TV. La IA lo investigará y producirá un informe ético detallado que cubre temas como el lenguaje, la representación social y más.
                     </li>
                     <li>
-                        <strong>Analyze Video Content:</strong> Provide a YouTube URL or upload an audio/video file. The AI will analyze the transcript for ethical considerations.
+                        <strong>Analizar Contenido de Video:</strong> Proporciona una URL de YouTube o sube un archivo de audio/video. La IA analizará la transcripción en busca de consideraciones éticas.
                     </li>
                     <li>
-                        <strong>Gain Insight:</strong> Use the generated report to reflect on the content you consume or create, fostering a more critical and ethical approach to media.
+                        <strong>Obtén Perspectivas:</strong> Utiliza el informe generado para reflexionar sobre el contenido que consumes o creas, fomentando un enfoque más crítico y ético hacia los medios.
                     </li>
                 </ul>
             </div>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-8">
-                Developed by Dr. Mois Polanco, mp@ufm.edu
+                Desarrollado por Dr. Mois Polanco, mp@ufm.edu
             </p>
         </div>
     );

@@ -5,11 +5,13 @@ import { InputForm, AnalysisInput } from './components/InputForm';
 import { AnalysisReport } from './components/AnalysisReport';
 import { LoadingSpinner } from './components/LoadingSpinner';
 import { ErrorMessage } from './components/ErrorMessage';
-import { analyzeSeries, analyzeTranscript, transcribeAudioFile } from './services/geminiService';
+import { analyzeSeries, analyzeTranscript } from './services/geminiService';
 import { getTranscriptFromUrl, transcribeAudioFromUrl } from './services/youtubeService';
-import type { AnalysisReportData } from './types';
+import { AnalysisReportData, UnknownTitleError } from './types';
 import { IntroContent } from './components/IntroContent';
 import { ExplanationPage } from './components/ExplanationPage';
+import { transcribeAudioFile } from './services/geminiService';
+
 
 type Page = 'main' | 'explanation';
 
@@ -19,6 +21,7 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
   const [isInitialState, setIsInitialState] = useState<boolean>(true);
   const [page, setPage] = useState<Page>('main');
+  const [analysisPrompt, setAnalysisPrompt] = useState<string | null>(null);
   
   const handleAnalyze = useCallback(async (input: AnalysisInput) => {
     setIsLoading(true);
@@ -26,6 +29,9 @@ export default function App() {
     setAnalysisResult(null);
     setIsInitialState(false);
     setPage('main');
+    setAnalysisPrompt(null);
+
+    let caughtError: unknown = null;
 
     try {
       let report: AnalysisReportData | null = null;
@@ -45,48 +51,54 @@ export default function App() {
       } else if (input.type === 'file' && input.value) {
         sourceName = input.value.name;
         const transcript = await transcribeAudioFile(input.value);
-        if (!transcript) throw new Error("Could not generate a transcript from the provided file.");
+        if (!transcript) throw new Error("No se pudo generar una transcripción del archivo proporcionado.");
         report = await analyzeTranscript(transcript, sourceName);
       } else {
-        throw new Error("No valid input provided. Please enter a title, URL, or select a file.");
+        throw new Error("No se proporcionó una entrada válida. Por favor, introduce un título, URL o selecciona un archivo.");
       }
       
-      const analysisDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+      const analysisDate = new Date().toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
       setAnalysisResult({ ...report, analysisDate, source: sourceName });
 
     } catch (err) {
+      caughtError = err;
+      if (err instanceof UnknownTitleError) {
+        setAnalysisPrompt(err.message);
+        setIsLoading(false);
+        return; 
+      }
+      
       if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError("An unknown error occurred.");
+        setError("Ocurrió un error desconocido.");
       }
     } finally {
-      setIsLoading(false);
+      if (!(caughtError instanceof UnknownTitleError)) {
+        setIsLoading(false);
+      }
     }
   }, []);
-
-  const handleUpdateReport = (updatedReport: AnalysisReportData) => {
-    setAnalysisResult(updatedReport);
-  };
 
   const handleGoHome = useCallback(() => {
     setAnalysisResult(null);
     setError(null);
     setIsInitialState(true);
     setPage('main');
+    setAnalysisPrompt(null);
   }, []);
   
   const handleGoToExplanation = () => setPage('explanation');
 
   const MainContent = () => (
     <>
-      {!analysisResult && <InputForm onAnalyze={handleAnalyze} isLoading={isLoading} />}
+      {!analysisResult && <InputForm onAnalyze={handleAnalyze} isLoading={isLoading} analysisPrompt={analysisPrompt} />}
       
       <div className="mt-8">
-        {isInitialState && <IntroContent />}
-        {isLoading && <LoadingSpinner message="Analyzing..." />}
+        {isInitialState && !analysisPrompt && <IntroContent />}
+        {isLoading && <LoadingSpinner message="Analizando..." />}
         {error && <ErrorMessage message={error} onNewAnalysis={handleGoHome} />}
-        {analysisResult && <AnalysisReport report={analysisResult} onNewAnalysis={handleGoHome} onUpdateReport={handleUpdateReport} />}
+        {analysisResult && <AnalysisReport report={analysisResult} onNewAnalysis={handleGoHome} />}
       </div>
     </>
   );

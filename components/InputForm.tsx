@@ -1,6 +1,6 @@
 
-import React, { useState, useRef } from 'react';
-import { UploadIcon } from './icons';
+import React, { useState, useRef, useEffect } from 'react';
+import { UploadIcon, LightbulbIcon } from './icons';
 
 export type AnalysisInput = 
   | { type: 'title'; value: string | null }
@@ -10,6 +10,7 @@ export type AnalysisInput =
 interface InputFormProps {
   onAnalyze: (input: AnalysisInput) => void;
   isLoading: boolean;
+  analysisPrompt?: string | null;
 }
 
 type Mode = 'title' | 'video';
@@ -26,12 +27,19 @@ const TabButton: React.FC<{ active: boolean; onClick: () => void; children: Reac
 };
 
 
-export const InputForm: React.FC<InputFormProps> = ({ onAnalyze, isLoading }) => {
+export const InputForm: React.FC<InputFormProps> = ({ onAnalyze, isLoading, analysisPrompt }) => {
   const [mode, setMode] = useState<Mode>('title');
   const [title, setTitle] = useState<string>('TikTok');
   const [url, setUrl] = useState<string>('');
   const [file, setFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (analysisPrompt) {
+        setMode('video');
+    }
+  }, [analysisPrompt]);
+
 
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUrl(e.target.value);
@@ -68,10 +76,24 @@ export const InputForm: React.FC<InputFormProps> = ({ onAnalyze, isLoading }) =>
 
   return (
     <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg">
+        {analysisPrompt && (
+            <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/40 border-l-4 border-blue-400 text-blue-800 dark:text-blue-200" role="alert">
+                <div className="flex">
+                    <div className="py-1">
+                        <LightbulbIcon className="h-6 w-6 text-blue-400 mr-4" />
+                    </div>
+                    <div>
+                         <p className="font-bold">Sugerencia</p>
+                         <p>{analysisPrompt}</p>
+                    </div>
+                </div>
+            </div>
+        )}
+
         <div className="flex justify-center mb-4 bg-slate-100 dark:bg-slate-900/50 p-1 rounded-lg">
             <div className="flex space-x-1">
-                <TabButton active={mode === 'title'} onClick={() => setMode('title')}>Analyze Title</TabButton>
-                <TabButton active={mode === 'video'} onClick={() => setMode('video')}>Analyze Video</TabButton>
+                <TabButton active={mode === 'title'} onClick={() => setMode('title')}>Analizar Título</TabButton>
+                <TabButton active={mode === 'video'} onClick={() => setMode('video')}>Analizar Video</TabButton>
             </div>
         </div>
 
@@ -79,10 +101,10 @@ export const InputForm: React.FC<InputFormProps> = ({ onAnalyze, isLoading }) =>
         {mode === 'title' && (
              <div>
                 <label htmlFor="series-title" className="block text-lg font-medium text-slate-700 dark:text-slate-300">
-                Analyze a Series or Movie
+                Analizar una Serie o Película
                 </label>
                 <p className="text-sm text-slate-500 dark:text-slate-400 mb-3">
-                Enter the title for a comprehensive ethical report.
+                Introduce el título para un informe ético completo.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3">
                 <input
@@ -90,7 +112,7 @@ export const InputForm: React.FC<InputFormProps> = ({ onAnalyze, isLoading }) =>
                     type="text"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    placeholder="e.g., 'TikTok', 'Black Mirror', or 'Parasite'"
+                    placeholder="p. ej., 'TikTok', 'Black Mirror', o 'Parásito'"
                     className="flex-grow w-full px-4 py-2 text-slate-900 bg-slate-100 dark:bg-slate-700 dark:text-white border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
                     disabled={isLoading}
                 />
@@ -101,10 +123,10 @@ export const InputForm: React.FC<InputFormProps> = ({ onAnalyze, isLoading }) =>
         {mode === 'video' && (
             <div>
                  <label htmlFor="video-input" className="block text-lg font-medium text-slate-700 dark:text-slate-300">
-                    Analyze a Video
+                    Analizar un Video
                 </label>
                 <p className="text-sm text-slate-500 dark:text-slate-400 mb-3">
-                    Provide a YouTube URL or upload an audio/video file to analyze its transcript.
+                    Proporciona una URL de YouTube o sube un archivo de audio/video para analizar su transcripción.
                 </p>
                 <div className="space-y-4">
                     <input
@@ -112,19 +134,19 @@ export const InputForm: React.FC<InputFormProps> = ({ onAnalyze, isLoading }) =>
                         type="text"
                         value={url}
                         onChange={handleUrlChange}
-                        placeholder="Enter YouTube URL"
+                        placeholder="Introduce la URL de YouTube"
                         className="flex-grow w-full px-4 py-2 text-slate-900 bg-slate-100 dark:bg-slate-700 dark:text-white border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
                         disabled={isLoading}
                     />
                     <div className="relative flex items-center justify-center w-full">
                         <hr className="w-full border-slate-300 dark:border-slate-600"/>
-                        <span className="absolute px-2 text-sm text-slate-500 bg-white dark:bg-slate-800">OR</span>
+                        <span className="absolute px-2 text-sm text-slate-500 bg-white dark:bg-slate-800">O</span>
                     </div>
                     <label htmlFor="file-upload" className={`relative flex flex-col items-center justify-center w-full h-32 border-2 border-slate-300 dark:border-slate-600 border-dashed rounded-lg cursor-pointer bg-slate-50 dark:bg-slate-700/50 ${file ? 'border-blue-500' : 'hover:bg-slate-100 dark:hover:bg-slate-700'}`}>
                         <div className="flex flex-col items-center justify-center pt-5 pb-6">
                             <UploadIcon className={`w-8 h-8 mb-4 ${file ? 'text-blue-500' : 'text-slate-500 dark:text-slate-400'}`} />
-                            <p className="mb-2 text-sm text-slate-500 dark:text-slate-400"><span className="font-semibold">Click to upload</span> or drag and drop</p>
-                            <p className="text-xs text-slate-500 dark:text-slate-400">Audio or Video file</p>
+                            <p className="mb-2 text-sm text-slate-500 dark:text-slate-400"><span className="font-semibold">Haz clic para subir</span> o arrastra y suelta</p>
+                            <p className="text-xs text-slate-500 dark:text-slate-400">Archivo de audio o video</p>
                         </div>
                         {file && (
                            <div className="absolute bottom-2 px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-md">{file.name}</div>
@@ -141,7 +163,7 @@ export const InputForm: React.FC<InputFormProps> = ({ onAnalyze, isLoading }) =>
                 disabled={isLoading || (mode === 'title' && !title) || (mode === 'video' && isVideoSubmitDisabled)}
                 className="w-full sm:w-auto px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-slate-900 disabled:bg-slate-400 dark:disabled:bg-slate-600 disabled:cursor-not-allowed transition-colors"
             >
-                {isLoading ? 'Analyzing...' : 'Analyze'}
+                {isLoading ? 'Analizando...' : 'Analizar'}
             </button>
         </div>
       </form>

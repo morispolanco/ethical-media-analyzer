@@ -1,3 +1,4 @@
+
 export type ConcernLevel = number;
 
 export interface ThematicAnalysis {
@@ -6,19 +7,20 @@ export interface ThematicAnalysis {
     concernLevel: ConcernLevel;
 }
 
-export interface TranslatedContent {
-    overallSummary: string;
-    thematicAnalysis: { analysis: string }[];
-    concludingRemarks: string;
-}
-
 export interface AnalysisReportData {
     title: string;
     overallSummary: string;
     thematicAnalysis: ThematicAnalysis[];
+    positiveAspectsSummary: string;
     concludingRemarks: string;
     overallConcernLevel: ConcernLevel;
     source?: string;
     analysisDate?: string;
-    translated?: TranslatedContent;
+}
+
+export class UnknownTitleError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'UnknownTitleError';
+  }
 }
